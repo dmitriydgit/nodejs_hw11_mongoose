@@ -1,23 +1,26 @@
 const mongoose = require('mongoose');
 
 var UserSchema = mongoose.Schema({
-	_id: {
-		id: mongoose.Schema.Types.ObjectId,
-		required: true
-	},
+	//_id: String,
 	username: {
 		type: String,
-		required: true
+		//required: [true, 'UserName is required']
 	},
 	password: {
 		type: String,
-		required: true
+		//required: [true, 'Password is required']
 	},
-	firstName: String,
-	lastName: String,
+	firstName: {
+		type: String,
+		required: [true, 'FirstName is required']
+	},
+	lastName: {
+		type: String,
+		required: [true, 'LastName is required']
+	},
 	email: {
 		type: String,
-		required: [true, `Email is required`],
+		//required: [true, `Email is required`],
 		validate: {
 			validator: function (v) {
 				var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
@@ -30,7 +33,7 @@ var UserSchema = mongoose.Schema({
 
 });
 
-const User = mongoose.model(`User`, UserSchema, 'users');
+const User = mongoose.model(`User`, UserSchema);
 
 module.exports = User;
 

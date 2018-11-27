@@ -1,40 +1,45 @@
 const PostModel = require('../db/postSchema');
 const CommentModel = require('../db/commentSchema');
-const commentsController = require('../controllers/commentsController')
+//const commentsController = require('../controllers/commentsController')
 
 function getPostList(req, res) {
-	PostModel.find(
-		{},
-		'',
-		{
-			sort: {
-				publicationDate: -1
-			}
-		},
-		function (err, posts) {
-			if (err) {
-				console.log(err);
-				res.status(500).json({ success: false, message: 'err.massage' });
-			}
-			res.json(posts);
-		})
-};
-
-function getPostByID(req, res) {
-	var postId = req.params.postId;
-	console.log(postId)
-	PostModel.findById(postId, function (err, post) {
+	PostModel.findSortedDsc(function (err, posts) { //statics
 		if (err) {
 			console.log(err);
 			res.status(500).json({ success: false, message: 'err.massage' });
 		}
-		res.json(post);
+		res.status(302).json(posts);
 	})
+
+
+	// .sort({
+	// 	publicationDate: -1
+	// })
+	// .exec(function (err, posts) {
+	// 	if (err) {
+	// 		console.log(err);
+	// 		res.status(500).json({ success: false, message: 'err.massage' });
+	// 	}
+	// 	res.status(302).json(posts);
+	// })
+};
+
+function getPostByID(req, res) {
+	var postId = req.params.postId;
+	PostModel.findById(postId)
+		.exec(function (err, post) {
+			if (err) {
+				console.log(err);
+				res.status(500).json({ success: false, message: 'err.massage' });
+			}
+			res.status(302).json(post);
+		})
 };
 
 function createPost(req, res) {
 	var postText = req.body.text;
 	var postPicture = req.body.picture;
+	var picture = req.files.picture;
 
 	if (req.files) {
 		var fileName = Date.now();
@@ -45,7 +50,6 @@ function createPost(req, res) {
 				console.log(err);
 				res.status(500).json({ success: false, message: err.massage });
 			}
-			console.log("File saved");
 			savePost(postText, fileLocation);
 			res.status(201).json({ success: true, message: "created" });
 		});
@@ -56,12 +60,24 @@ function createPost(req, res) {
 };
 
 
+// function savePicture(picture, res){
+// 	var fileName = Date.now();
+// 	var fileLocation = `/assets/img/${fileName}.jpeg`; //хардкодом jpg?
+// 	var sampleFile = picture;
+// 		sampleFile.mv('./public' + fileLocation, function (err) {
+// 			if (err) {
+// 				console.log(err);
+// 				res.status(500).json({ success: false, message: err.massage });
+// 			}
+// 		})
+// 	};
 
 function savePost(postText, postPicture) {
 	var newPost = {
 		author: {
 			_id: '1',
-			name: 'Dave',
+			firstName: 'Dave',
+			lastName: 'Gamashe',
 			avatar: "/assets/img/avatar-dhg.png"
 		},
 		publicationDate: Date.now(),
@@ -69,20 +85,18 @@ function savePost(postText, postPicture) {
 		picture: postPicture,
 	};
 
-	var post = new PostModel(newPost);
-	post.save(function (err) {
+	PostModel.create(newPost, function (err, post) {
 		if (err) {
 			console.log(err);
 		}
-	});
-	console.log('Post saved to DB')
+		console.log('Post saved to DB', post)
+	})
 }
 
 function editPost(req, res) {
 	var postId = req.params.postId;
 	var postText = req.body.text;
 	var postPicture = req.body.picture;
-	console.log(req.body, postId)
 
 	if (req.files) {
 		var fileName = Date.now();
@@ -124,8 +138,8 @@ function deletePost(req, res) {
 	var postId = req.params.postId;
 	//console.log(postId)
 	deletePostById(postId);
-	deleteCommentsByPostId(postId);
-	res.status(302).json({ success: true, message: 'deleted' });
+	deleteCommentsByPostId(postId);//удаляем комменты
+	res.status(204).json({ success: true, message: 'deleted' });
 };
 
 
@@ -135,17 +149,16 @@ function deletePostById(postId) {
 		if (err) {
 			console.log(err);
 		}
-		console.log("Post deleted");
+		console.log("Post deleted", post);
 	})
-
 }
 
 function deleteCommentsByPostId(postId) {
-	CommentModel.remove({ "post_id": postId }, function (err, comment) {
+	CommentModel.remove({ "post_id": postId }, function (err, comments) {
 		if (err) {
 			console.log(err);
 		}
-		console.log("Comments deleted");
+		console.log("Comments deleted", comments);
 	})
 }
 

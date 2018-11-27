@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 
 var CommentSchema = mongoose.Schema({
-	//_id: mongoose.Schema.Types.ObjectId,
+	// user: {
+	// 	type: mongoose.Schema.Types.ObjectId,
+	// 	ref: `User`
+	// },
 	user: {
 		_id: String,
-		name: String,
+		firstName: String,
+		lastName: String,
 		avatar: String,
 		//required: true
 	},

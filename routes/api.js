@@ -37,3 +37,10 @@ module.exports = router;
 // нужен пример работы с мидлвэйр (когда сохраняем пост)
 //картинка сохраняется в jpg/ как вытащить формат картинки?
 //mongoose.set('useFindAndModify', false);
+//юзать lean вместо exec
+/*
+PostModel.find()
+.sort({ _id: -1 })
+.populate('author')
+.lean();
+*/

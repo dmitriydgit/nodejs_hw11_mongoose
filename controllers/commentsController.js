@@ -1,9 +1,8 @@
 const CommentModel = require('../db/commentSchema');
 
 
-function getCommentsByPostID(req, res) {
+function getCommentsByPostID(req, res) { //спустить статический метод на схему
 	var postId = req.params.postId;
-	//console.log(commentId)
 	CommentModel.find({ "post_id": postId }, function (err, comment) {
 		if (err) {
 			console.log(err);
@@ -24,7 +23,8 @@ function saveComment(commentText, postId) {
 	var newComment = {
 		user: {
 			_id: '1',
-			name: 'Dave',
+			firstName: 'Dave',
+			lastName: 'Gamashe',
 			avatar: "/assets/img/avatar-dhg.png"
 		},
 		post_id: postId,
@@ -36,8 +36,8 @@ function saveComment(commentText, postId) {
 		if (err) {
 			console.log(err);
 		}
+		console.log('Comment saved to DB')
 	});
-	console.log('Comment saved to DB')
 }
 
 function getCommentByID(req, res) {
@@ -59,20 +59,29 @@ function editComment(req, res) {
 };
 
 function updateComment(commentId, commentText) {
-	var comment = {
-		text: commentText,
-	}
+	// var comment = {
+	// 	text: commentText,
+	// }
 	CommentModel.findById(commentId, function (err, foundComment) { // чекнул есть ли коммент в базе
 		if (err) {
 			console.log(err);
 		}
+
 		if (foundComment) {
-			CommentModel.findByIdAndUpdate(commentId, comment, function (err) {
+			foundComment.text = commentText;
+			foundComment.save(function (err) {
 				if (err) {
 					console.log(err);
 				}
-				console.log('Comment updated')
-			});
+				console.log('Comment saved to DB')
+			})
+
+			// CommentModel.findByIdAndUpdate(commentId, comment, function (err) {
+			// 	if (err) {
+			// 		console.log(err);
+			// 	}
+			// 	console.log('Comment updated')
+			// });
 		}
 	});
 }

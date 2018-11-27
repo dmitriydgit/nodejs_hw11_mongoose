@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 
 var PostSchema = mongoose.Schema({
-	//_id: mongoose.Schema.Types.ObjectId,
+	// author: {
+	// 	type: mongoose.Schema.Types.ObjectId,
+	// 	ref: `User`
+	// },
 	author: {
 		_id: String,
-		name: String,
+		firstName: String,
+		lastName: String,
 		avatar: String,
 		//required: true
 	},
@@ -17,6 +21,14 @@ var PostSchema = mongoose.Schema({
 	},
 	picture: String,
 });
+
+PostSchema.statics.findSortedDsc = function (cb) {
+	this.find()
+		.sort({ publicationDate: -1 })
+		.exec(cb)
+}
+
+
 
 const Post = mongoose.model(`Post`, PostSchema);
 
