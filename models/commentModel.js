@@ -1,16 +1,9 @@
 const mongoose = require('mongoose');
 
 var CommentSchema = mongoose.Schema({
-	// user: {
-	// 	type: mongoose.Schema.Types.ObjectId,
-	// 	ref: `User`
-	// },
 	user: {
-		_id: String,
-		firstName: String,
-		lastName: String,
-		avatar: String,
-		//required: true
+		type: mongoose.Schema.Types.ObjectId,
+		ref: `User`
 	},
 	post_id: mongoose.Schema.Types.ObjectId,
 	publicationDate: {
@@ -20,8 +13,15 @@ var CommentSchema = mongoose.Schema({
 		type: String,
 		required: true
 	}
-	//picture: String,
 });
+
+CommentSchema.statics.findCommentAndPopulateUser = function (postId, cb) {
+	this.find({ "post_id": postId })
+		.populate(`user`)
+		.sort({ publicationDate: -1 })
+		.exec(cb);
+}
+
 
 const Comments = mongoose.model(`Comment`, CommentSchema);
 

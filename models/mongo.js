@@ -17,3 +17,5 @@ mongoose.connection.on('error', () => {
 })
 
 module.exports = mongoose;
+
+//mongo ds055980.mlab.com:55980/social_network_db -u dmitriydgit -p 4580510Dim

@@ -1,6 +1,6 @@
-const PostModel = require('../db/postSchema');
-const CommentModel = require('../db/commentSchema');
-//const commentsController = require('../controllers/commentsController')
+const PostModel = require('../models/postModel');
+const CommentModel = require('../models/commentModel');
+const userModel = require('../models/userModel')
 
 function getPostList(req, res) {
 	PostModel.findSortedDsc(function (err, posts) { //statics
@@ -10,18 +10,6 @@ function getPostList(req, res) {
 		}
 		res.status(302).json(posts);
 	})
-
-
-	// .sort({
-	// 	publicationDate: -1
-	// })
-	// .exec(function (err, posts) {
-	// 	if (err) {
-	// 		console.log(err);
-	// 		res.status(500).json({ success: false, message: 'err.massage' });
-	// 	}
-	// 	res.status(302).json(posts);
-	// })
 };
 
 function getPostByID(req, res) {
@@ -32,6 +20,7 @@ function getPostByID(req, res) {
 				console.log(err);
 				res.status(500).json({ success: false, message: 'err.massage' });
 			}
+			console.log("Post found", post)
 			res.status(302).json(post);
 		})
 };
@@ -39,7 +28,6 @@ function getPostByID(req, res) {
 function createPost(req, res) {
 	var postText = req.body.text;
 	var postPicture = req.body.picture;
-	var picture = req.files.picture;
 
 	if (req.files) {
 		var fileName = Date.now();
@@ -74,24 +62,18 @@ function createPost(req, res) {
 
 function savePost(postText, postPicture) {
 	var newPost = {
-		author: {
-			_id: '1',
-			firstName: 'Dave',
-			lastName: 'Gamashe',
-			avatar: "/assets/img/avatar-dhg.png"
-		},
-		publicationDate: Date.now(),
+		author: '53cb6b9b4f4ddef1ad47f943',
 		text: postText,
 		picture: postPicture,
 	};
-
 	PostModel.create(newPost, function (err, post) {
 		if (err) {
 			console.log(err);
+		} else {
+			console.log('Post saved to DB', post)
 		}
-		console.log('Post saved to DB', post)
-	})
-}
+	});
+};
 
 function editPost(req, res) {
 	var postId = req.params.postId;

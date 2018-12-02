@@ -47,7 +47,7 @@
               <div class="rw">
                 <div class="bpb">
                   <small class="acx axc">${moment(post.publicationDate).fromNow()}</small>
-                  <h6>${post.author.firstName} ${post.author.lastName} </h6>
+                  <h6>${post.author.fullName}</h6>
                 </div>
     
                 <p>${post.text}
@@ -87,7 +87,7 @@
                                             <div class="bpd">
                                                 <div class="bpb">
                                                     <small class="acx axc">${moment(comment.publicationDate).fromNow()}</small>
-                                                    <h6>${comment.user.firstName} ${comment.user.lastName} </h6>
+                                                    <h6>${comment.user.fullName} </h6>
                                                 </div>
                                                 <div class="bpb">
                                                 ${comment.text}

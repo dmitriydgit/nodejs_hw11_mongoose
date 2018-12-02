@@ -1,9 +1,9 @@
-const CommentModel = require('../db/commentSchema');
+const CommentModel = require('../models/commentModel');
 
 
-function getCommentsByPostID(req, res) { //спустить статический метод на схему
+function getCommentsByPostID(req, res) {
 	var postId = req.params.postId;
-	CommentModel.find({ "post_id": postId }, function (err, comment) {
+	CommentModel.findCommentAndPopulateUser(postId, function (err, comment) {
 		if (err) {
 			console.log(err);
 			res.status(500).json({ success: false, message: 'err.massage' });
@@ -21,22 +21,16 @@ function createComment(req, res) {
 
 function saveComment(commentText, postId) {
 	var newComment = {
-		user: {
-			_id: '1',
-			firstName: 'Dave',
-			lastName: 'Gamashe',
-			avatar: "/assets/img/avatar-dhg.png"
-		},
+		user: "53cb6b9b4f4ddef1ad47f943",
 		post_id: postId,
 		publicationDate: Date.now(),
 		text: commentText
 	};
-	var comment = new CommentModel(newComment);
-	comment.save(function (err) {
+	CommentModel.create(newComment, function (err, comment) {
 		if (err) {
 			console.log(err);
 		}
-		console.log('Comment saved to DB')
+		console.log('Comment saved to DB', comment)
 	});
 }
 
@@ -59,9 +53,6 @@ function editComment(req, res) {
 };
 
 function updateComment(commentId, commentText) {
-	// var comment = {
-	// 	text: commentText,
-	// }
 	CommentModel.findById(commentId, function (err, foundComment) { // чекнул есть ли коммент в базе
 		if (err) {
 			console.log(err);
@@ -76,12 +67,6 @@ function updateComment(commentId, commentText) {
 				console.log('Comment saved to DB')
 			})
 
-			// CommentModel.findByIdAndUpdate(commentId, comment, function (err) {
-			// 	if (err) {
-			// 		console.log(err);
-			// 	}
-			// 	console.log('Comment updated')
-			// });
 		}
 	});
 }
